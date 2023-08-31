@@ -8,8 +8,22 @@ from django.shortcuts import render
 # from exam.models import Categories, Languages, Questions
 # import urllib
 import requests
+import random
 from .models import Languages, Categories, Questions
 from bs4 import BeautifulSoup
+from django.forms import model_to_dict
+
+
+
+
+def get_languages(request):
+    languages = Languages.objects.all()
+    print('#####################')
+    print(languages)
+    print('#####################')
+    langDict = [model_to_dict(language) for language in languages] 
+    return JsonResponse(langDict, safe=False)
+
 
 # clean it up!
 def fill_db(request): 
@@ -62,5 +76,14 @@ def fill_db(request):
         
     return JsonResponse({"status": "ok"})
         
-# def get_exam_questions(request):
+def get_exam_questions(request, lang_id:int):
+    lang_categories = Categories.objects.filter(language_id=lang_id)
+    random_20_questions = []
     
+    for category in lang_categories:
+        category_questions = list(Questions.objects.filter(category_id=category))
+        random_five_questions = random.sample(category_questions, 5)
+        random_20_questions.extend(random_five_questions)
+        
+    random_20_questions_dict = [model_to_dict(question) for question in random_20_questions] 
+    return JsonResponse(random_20_questions_dict, safe=False)
