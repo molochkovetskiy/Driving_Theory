@@ -3,10 +3,11 @@ from .models import Languages, Categories, Questions
 
 
 class LanguagesSerializer(serializers.ModelSerializer):
-
+    id = serializers.IntegerField()
+    
     class Meta:
         model = Languages
-        fields = ('code',)
+        fields = ('id', 'code',)
         
 class CategoriesSerializer(serializers.ModelSerializer):
 

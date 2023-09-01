@@ -1,0 +1,13 @@
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: antiquewhite;
+}
+
+.prev-btn {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: ;
+}
