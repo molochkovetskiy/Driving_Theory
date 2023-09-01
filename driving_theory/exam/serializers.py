@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Languages, Categories, Questions
+from .models import Languages, Categories, Questions, ImagesOfQuestions
 
 
 class LanguagesSerializer(serializers.ModelSerializer):
@@ -7,19 +7,26 @@ class LanguagesSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Languages
-        fields = ('id', 'code',)
+        fields = "__all__" 
         
 class CategoriesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Categories
-        fields = ('name', 'language_id',)
+        fields = "__all__"
         
 class QuestionsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Questions
-        fields = ('question', 'answer1', 'answer2', 'answer3', 'answer4', 'corr_answer', 'category_id',)
+        fields = "__all__"
+        
 
+class ImagesOfQuestionsSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
+    
+    class Meta:
+        model = ImagesOfQuestions
+        fields = "__all__"
         
         

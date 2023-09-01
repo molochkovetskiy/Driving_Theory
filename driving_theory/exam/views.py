@@ -2,7 +2,7 @@ from django.http import JsonResponse
 import requests
 import random
 from .models import Languages, Categories, Questions, ImagesOfQuestions
-from .serializers import LanguagesSerializer, CategoriesSerializer, QuestionsSerializer
+from .serializers import LanguagesSerializer, CategoriesSerializer, QuestionsSerializer, ImagesOfQuestionsSerializer
 
 from bs4 import BeautifulSoup
 
@@ -36,6 +36,14 @@ class QuestionsAPIView(APIView):
         serializer = QuestionsSerializer(random_20_questions, many=True)
         return Response(serializer.data)
 
+
+class ImageAPIView(APIView):
+
+    def get(self, request, img_id: int):
+        img_qs = ImagesOfQuestions.objects.get(id=img_id)
+        print(img_qs)
+        serializer = ImagesOfQuestionsSerializer(img_qs)
+        return Response(serializer.data)
 
 # clean it up!
 class FillDB(APIView):
