@@ -16,14 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from exam.views import fill_db, get_languages, get_exam_questions
+from exam.views import  LanguagesAPIView, FillDB, QuestionsAPIView 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls') ),
-    path('fill-db/',  fill_db, name="fill_db"),
-    path('languages/',  get_languages, name="languages"),
-    path('get-exam-questions/<int:lang_id>',  get_exam_questions, name="get_exam_questions"),
-    
-    
+    path('exam/', include('exam.urls') ),
 ]
