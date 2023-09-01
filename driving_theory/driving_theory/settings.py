@@ -83,7 +83,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'DrivingTheory',
         'USER': 'postgres',
-        'PASSWORD': 'Sd785r',
+        'PASSWORD': 'dilearn',
         'HOST': 'localhost',
         'PORT': '',
     }
