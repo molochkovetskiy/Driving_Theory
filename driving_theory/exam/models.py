@@ -30,7 +30,7 @@ class Questions(models.Model):
     answer1 = models.TextField()
     answer2 = models.TextField()
     answer3 = models.TextField()
-    answer4 = models.TextField()
+    answer4 = models.TextField() 
     corr_answer = models.SmallIntegerField()
     image_id = models.ForeignKey('ImagesOfQuestions', null=True, on_delete=models.CASCADE)
     category_id = models.ForeignKey('Categories', on_delete=models.CASCADE)

@@ -4,28 +4,7 @@ const body = document.querySelector("body");
 let questions = '';
 let answers = {};
 let corrAnswers = {};
-// let answers = {
-//     0: 0,
-//     1: 0,
-//     2: 0,
-//     3: 0,
-//     4: 0,
-//     5: 0,
-//     6: 0,
-//     7: 0,
-//     8: 0,
-//     9: 0,
-//     10: 0,
-//     11: 0,
-//     12: 0,
-//     13: 0,
-//     14: 0,
-//     15: 0,
-//     16: 0,
-//     17: 0,
-//     18: 0,
-//     19: 0,
-// }
+let curr_question = 0;
 
 async function getAllLanguages() {
     try {
@@ -84,18 +63,53 @@ async function getQuestions() {
 async function renderExam(questions) {
     body.innerText = "";
     //box for 1 question
+    const questionsBoxDiv = document.createElement("div");
+    questionsBoxDiv.id = "questions-box-div";
+    const sideMenuDiv = document.createElement("div");
+    sideMenuDiv.id = "side-menu-div";
     const questionsDiv = document.createElement("div");
-    questionsDiv.id = "questions_div";
-    body.append(questionsDiv);
-
-    // renderSideMenu();
+    questionsDiv.id = "questions-div";
+    
+    body.append(questionsBoxDiv);
+    questionsBoxDiv.append(sideMenuDiv, questionsDiv);
+    renderSideMenu(sideMenuDiv, questions);
     await showQuestion(questionsDiv, questions, 0);
     showSubmitButton();
 }
 
+function renderSideMenu(parent, questions) {
+    for (let index = 0; index < questions.length; index++) {
+        const qSideDiv = document.createElement("div");
+        const qSideSpan = document.createElement("span");
+        qSideDiv.id = `q_s_div_${index}`;
+        qSideDiv.classList = "link-to-question";
+        qSideSpan.id = `q_s_span_${index}`;
+        qSideSpan.innerText = `#${index+1}`;
+        qSideDiv.append(qSideSpan)
+        parent.append(qSideDiv)
+
+        qSideDiv.addEventListener("click", () =>{
+            console.log(index)
+            const questionsDiv = document.getElementById("questions-div");
+            questionsDiv.innerText = ""; 
+            showQuestion(questionsDiv, questions, index);
+        })
+        
+    }
+}
+
+
+
 
 //clean it up!
 async function showQuestion(parent, questions, index) {
+    // highlighting current question in side bar
+    let sideQuestionLink = document.getElementById(`q_s_div_${curr_question}`);
+    sideQuestionLink.style.border = "none";
+    curr_question = index;
+    sideQuestionLink = document.getElementById(`q_s_div_${curr_question}`);
+    sideQuestionLink.style.border = "1px solid red";
+
 
     // question
     const question = questions[index];
@@ -168,7 +182,7 @@ async function displayImg(element, image_id) {
             const url = `http://127.0.0.1:8000/exam/get-img/${image_id}`
             const response = await fetch(url);
             if (!response.ok) {
-                throw new Error("Couldn`t get languages")
+                throw new Error("Couldn`t get languages");
             } else {
                 let data = await response.json();
                 const image = document.createElement("img");
@@ -177,7 +191,7 @@ async function displayImg(element, image_id) {
             }
         }
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
 
 }
@@ -196,6 +210,11 @@ async function saveTheAnswer() {
             // save answer to global answers
             answers[questionNum] = answer;
             console.log(answers)
+            
+            // highlighting already answered questions
+            curr_question = questionNum;
+            let sideQuestionLink = document.getElementById(`q_s_div_${curr_question}`);
+            sideQuestionLink.style.backgroundColor = "lightgreen";
         }
     }
 
@@ -204,13 +223,13 @@ async function saveTheAnswer() {
 function showSubmitButton() {
     const submitButton = document.createElement("button");
     submitButton.id = "submit-answers";
-    submitButton.innerText = "Submit all answers and finish" // add font awesome icon to submit
+    submitButton.innerText = "Submit all answers and finish"; // add font awesome icon to submit
     // displaying given answers
     submitButton.addEventListener("click", () => {
         const p_user = document.createElement("p");
-        console.log(Object.entries(answers))
+        console.log(Object.entries(answers));
         p_user.innerText = Object.entries(answers);
-        p_user.id = "usr_answers"
+        p_user.id = "usr_answers";
 
         body.innerText = "";
         body.append(p_user);

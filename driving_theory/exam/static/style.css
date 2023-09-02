@@ -10,10 +10,12 @@ body {
     display: flex;
     flex-direction: row;
     width: 100vw;
+    height: 80vh;
 }
 
 #side-menu-div {
     width: 20%;
+    height: 100%;
     display: flex;
     flex-wrap: wrap;
     background-color: purple;
@@ -21,8 +23,17 @@ body {
 
 #questions-div {
     width: 80%;
+    height: 100%;
+
     display: flex;
     flex-direction: column;
     align-items: center;
     background-color: cadetblue;
+}
+
+
+.link-to-question{
+    cursor: pointer;
+    /* width: 20px;
+    height: 20px; */
 }
