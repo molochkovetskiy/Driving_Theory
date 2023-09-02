@@ -69,7 +69,7 @@ async function renderExam(questions) {
     sideMenuDiv.id = "side-menu-div";
     const questionsDiv = document.createElement("div");
     questionsDiv.id = "questions-div";
-    
+
     body.append(questionsBoxDiv);
     questionsBoxDiv.append(sideMenuDiv, questionsDiv);
 
@@ -79,25 +79,29 @@ async function renderExam(questions) {
 }
 
 function renderSideMenu(parent, questions) {
+    const sideQuestionsBox = document.createElement("div");
+    sideQuestionsBox.id = "side-questions-box"
+
     for (let index = 0; index < questions.length; index++) {
         const qSideDiv = document.createElement("div");
         const qSideSpan = document.createElement("span");
         qSideDiv.id = `q_s_div_${index}`;
         qSideDiv.classList = "link-to-question";
         qSideSpan.id = `q_s_span_${index}`;
-        qSideSpan.innerText = `#${index+1}`;
+        qSideSpan.innerText = `#${index + 1}`;
         qSideDiv.append(qSideSpan)
-        parent.append(qSideDiv)
+        sideQuestionsBox.append(qSideDiv)
 
         qSideDiv.addEventListener("click", saveTheAnswer);
 
-        qSideDiv.addEventListener("click", async() =>{
+        qSideDiv.addEventListener("click", async () => {
             const questionsDiv = document.getElementById("questions-div");
-            questionsDiv.innerText = ""; 
+            questionsDiv.innerText = "";
             showQuestion(questionsDiv, questions, index);
         })
-        
+
     }
+    parent.append(sideQuestionsBox);
 }
 
 //clean it up!
@@ -114,16 +118,17 @@ async function showQuestion(parent, questions, index) {
     const question = questions[index];
     const questionOfQuestion = document.createElement("h3");
     questionOfQuestion.innerText = question["question"];
+    questionOfQuestion.className = "question"
     parent.append(questionOfQuestion);
 
     //image
     await displayImg(parent, question["image_id"]);
 
-    
     // all 4 answers
     const answers = [question['answer1'], question['answer2'], question['answer3'], question['answer4']];
-    
 
+    const answersBox = document.createElement("div");
+    answersBox.id = "answers-box";
     for (let i = 1; i < (answers.length + 1); i++) {
         // answers div
         const answerDiv = document.createElement("div");
@@ -140,40 +145,41 @@ async function showQuestion(parent, questions, index) {
         answerLabel.for = answerInp.id;
         const answerName = `answer${i}`;
         answerLabel.innerText = question[answerName];
-
-
-
         // display if answer to question was given
         if (index in usr_answers && i == usr_answers[curr_question]) {
             answerInp.checked = true;
         }
-
-
-        
         //append
-        parent.append(answerDiv);
+        answersBox.append(answerDiv);
         answerDiv.append(answerInp, answerLabel);
     }
+    parent.append(answersBox);
 
     //list buttons
+    const listButtons = document.createElement("div");
+    listButtons.id = "list-buttons";
+
     if (index > 0) {
         const prevButton = document.createElement("button");
-        prevButton.classList = ["prev-btn", "list-btn"];
+        prevButton.classList.add("prev-btn");
+        prevButton.classList.add("list-btn");
         prevButton.innerText = "<"; // find font awesome icon for "previous"
-        parent.append(prevButton);
+        listButtons.append(prevButton);
         prevButton.addEventListener("click", saveTheAnswer)
         prevButton.addEventListener("click", showPrevQuestion)
     }
 
     if (index < 19) {
         const nextButton = document.createElement("button");
-        nextButton.classList = ["next-btn", "list-btn"];
+        nextButton.classList.add("next-btn");
+        nextButton.classList.add("list-btn");
         nextButton.innerText = ">"; // find font awesome icon for "next"
-        parent.append(nextButton);
+        listButtons.append(nextButton);
         nextButton.addEventListener("click", saveTheAnswer)
         nextButton.addEventListener("click", showNextQuestion)
     }
-    
+    parent.append(listButtons);
+
     function showNextQuestion() {
         parent.innerText = "";
         showQuestion(parent, questions, index + 1);
@@ -197,13 +203,13 @@ async function displayImg(element, image_id) {
                 let data = await response.json();
                 const image = document.createElement("img");
                 image.src = data["image_link"];
+                image.class = "picture"
                 element.append(image);
             }
         }
     } catch (error) {
         console.log(error);
     }
-
 }
 
 async function saveTheAnswer() {
@@ -219,8 +225,6 @@ async function saveTheAnswer() {
             const questionNum = ansInputs[i].id.split("_")[1];
             // save answer to global usr_answers
             usr_answers[questionNum] = answer;
-            // console.log(usr_answers)
-            
             // highlighting already answered questions
             curr_question = questionNum;
             let sideQuestionLink = document.getElementById(`q_s_div_${curr_question}`);
@@ -233,7 +237,7 @@ async function saveTheAnswer() {
 function showSubmitButton() {
     const submitButton = document.createElement("button");
     submitButton.id = "submit-answers";
-    submitButton.innerText = "Submit all answers and finish"; // add font awesome icon to submit
+    submitButton.innerText = "OK!"; // add font awesome icon to submit
     // displaying given answers
     submitButton.addEventListener("click", () => {
         const p_user = document.createElement("p");
@@ -244,8 +248,9 @@ function showSubmitButton() {
         body.append(p_user);
     })
     // getting right answers
-    submitButton.addEventListener("click", getCorrAnsers)
-    body.append(submitButton)
+    submitButton.addEventListener("click", getCorrAnsers);
+    const sidebarDiv = document.getElementById("side-menu-div");
+    sidebarDiv.append(submitButton)
 }
 
 
@@ -254,7 +259,6 @@ function getCorrAnsers() {
         corrAnswers[i] = questions[i]["corr_answer"];
     }
     const p_corr = document.createElement("p");
-    // console.log(Object.entries(usr_answers))
     p_corr.innerText = Object.entries(corrAnswers);
     p_corr.id = "corr_answers"
     p_corr.style.backgroundColor = "lightgreen"
