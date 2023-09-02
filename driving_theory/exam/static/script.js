@@ -2,7 +2,7 @@ const langBtn = document.getElementById("lang-btn");
 const langForm = document.getElementById("lang-form");
 const body = document.querySelector("body");
 let questions = '';
-let answers = {};
+let usr_answers = {};
 let corrAnswers = {};
 let curr_question = 0;
 
@@ -88,6 +88,8 @@ function renderSideMenu(parent, questions) {
         qSideDiv.append(qSideSpan)
         parent.append(qSideDiv)
 
+        qSideDiv.addEventListener("click", saveTheAnswer);
+
         qSideDiv.addEventListener("click", () =>{
             console.log(index)
             const questionsDiv = document.getElementById("questions-div");
@@ -143,6 +145,10 @@ async function showQuestion(parent, questions, index) {
         //append
         parent.append(answerDiv);
         answerDiv.append(answerInp, answerLabel);
+        // display if answer to question was given
+        if (index in Object.keys(usr_answers) && i == usr_answers[curr_question]) {
+            answerInp.checked = true;
+        }
     }
 
     //list buttons
@@ -207,9 +213,9 @@ async function saveTheAnswer() {
             answer = Number(ansInputs[i].value);
             //get question number from its id
             const questionNum = ansInputs[i].id.split("_")[1];
-            // save answer to global answers
-            answers[questionNum] = answer;
-            console.log(answers)
+            // save answer to global usr_answers
+            usr_answers[questionNum] = answer;
+            console.log(usr_answers)
             
             // highlighting already answered questions
             curr_question = questionNum;
@@ -227,8 +233,8 @@ function showSubmitButton() {
     // displaying given answers
     submitButton.addEventListener("click", () => {
         const p_user = document.createElement("p");
-        console.log(Object.entries(answers));
-        p_user.innerText = Object.entries(answers);
+        console.log(Object.entries(usr_answers));
+        p_user.innerText = Object.entries(usr_answers);
         p_user.id = "usr_answers";
 
         body.innerText = "";
@@ -245,7 +251,7 @@ function getCorrAnsers() {
         corrAnswers[i] = questions[i]["corr_answer"];
     }
     const p_corr = document.createElement("p");
-    console.log(Object.entries(answers))
+    console.log(Object.entries(usr_answers))
     p_corr.innerText = Object.entries(corrAnswers);
     p_corr.id = "corr_answers"
     p_corr.style.backgroundColor = "lightgreen"
