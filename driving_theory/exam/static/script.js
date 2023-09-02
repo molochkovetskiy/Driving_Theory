@@ -1,8 +1,9 @@
 const langBtn = document.getElementById("lang-btn");
 const langForm = document.getElementById("lang-form");
-const body = document.querySelector("body")
-let answers = {
-}
+const body = document.querySelector("body");
+let questions = '';
+let answers = {};
+let corrAnswers = {};
 // let answers = {
 //     0: 0,
 //     1: 0,
@@ -72,7 +73,7 @@ async function getQuestions() {
             // displayDownloadError(); display error with downloading, suggest to reload
             throw new Error("Cant get the questions");
         } else {
-            let questions = await response.json();
+            questions = await response.json();
             await renderExam(questions);
         }
     } catch (error) {
@@ -81,7 +82,7 @@ async function getQuestions() {
 }
 
 async function renderExam(questions) {
-    body.innerText = ""
+    body.innerText = "";
     //box for 1 question
     const questionsDiv = document.createElement("div");
     questionsDiv.id = "questions_div";
@@ -89,6 +90,7 @@ async function renderExam(questions) {
 
     // renderSideMenu();
     await showQuestion(questionsDiv, questions, 0);
+    showSubmitButton();
 }
 
 
@@ -199,6 +201,37 @@ async function saveTheAnswer() {
 
 }
 
+function showSubmitButton() {
+    const submitButton = document.createElement("button");
+    submitButton.id = "submit-answers";
+    submitButton.innerText = "Submit all answers and finish" // add font awesome icon to submit
+    // displaying given answers
+    submitButton.addEventListener("click", () => {
+        const p_user = document.createElement("p");
+        console.log(Object.entries(answers))
+        p_user.innerText = Object.entries(answers);
+        p_user.id = "usr_answers"
+
+        body.innerText = "";
+        body.append(p_user);
+    })
+    // getting right answers
+    submitButton.addEventListener("click", getCorrAnsers)
+    body.append(submitButton)
+}
+
+
+function getCorrAnsers() {
+    for (let i = 0; i < questions.length; i++) {
+        corrAnswers[i] = questions[i]["corr_answer"];
+    }
+    const p_corr = document.createElement("p");
+    console.log(Object.entries(answers))
+    p_corr.innerText = Object.entries(corrAnswers);
+    p_corr.id = "corr_answers"
+    p_corr.style.backgroundColor = "lightgreen"
+    body.append(p_corr);
+}
 
 getAllLanguages()
 langBtn.addEventListener('click', getQuestions)
