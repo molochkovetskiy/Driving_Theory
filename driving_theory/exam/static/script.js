@@ -72,6 +72,7 @@ async function renderExam(questions) {
     
     body.append(questionsBoxDiv);
     questionsBoxDiv.append(sideMenuDiv, questionsDiv);
+
     renderSideMenu(sideMenuDiv, questions);
     await showQuestion(questionsDiv, questions, 0);
     showSubmitButton();
@@ -90,8 +91,7 @@ function renderSideMenu(parent, questions) {
 
         qSideDiv.addEventListener("click", saveTheAnswer);
 
-        qSideDiv.addEventListener("click", () =>{
-            console.log(index)
+        qSideDiv.addEventListener("click", async() =>{
             const questionsDiv = document.getElementById("questions-div");
             questionsDiv.innerText = ""; 
             showQuestion(questionsDiv, questions, index);
@@ -99,9 +99,6 @@ function renderSideMenu(parent, questions) {
         
     }
 }
-
-
-
 
 //clean it up!
 async function showQuestion(parent, questions, index) {
@@ -122,9 +119,10 @@ async function showQuestion(parent, questions, index) {
     //image
     await displayImg(parent, question["image_id"]);
 
-
+    
     // all 4 answers
     const answers = [question['answer1'], question['answer2'], question['answer3'], question['answer4']];
+    
 
     for (let i = 1; i < (answers.length + 1); i++) {
         // answers div
@@ -142,13 +140,19 @@ async function showQuestion(parent, questions, index) {
         answerLabel.for = answerInp.id;
         const answerName = `answer${i}`;
         answerLabel.innerText = question[answerName];
+
+
+
+        // display if answer to question was given
+        if (index in usr_answers && i == usr_answers[curr_question]) {
+            answerInp.checked = true;
+        }
+
+
+        
         //append
         parent.append(answerDiv);
         answerDiv.append(answerInp, answerLabel);
-        // display if answer to question was given
-        if (index in Object.keys(usr_answers) && i == usr_answers[curr_question]) {
-            answerInp.checked = true;
-        }
     }
 
     //list buttons
@@ -215,7 +219,7 @@ async function saveTheAnswer() {
             const questionNum = ansInputs[i].id.split("_")[1];
             // save answer to global usr_answers
             usr_answers[questionNum] = answer;
-            console.log(usr_answers)
+            // console.log(usr_answers)
             
             // highlighting already answered questions
             curr_question = questionNum;
@@ -233,7 +237,6 @@ function showSubmitButton() {
     // displaying given answers
     submitButton.addEventListener("click", () => {
         const p_user = document.createElement("p");
-        console.log(Object.entries(usr_answers));
         p_user.innerText = Object.entries(usr_answers);
         p_user.id = "usr_answers";
 
@@ -251,7 +254,7 @@ function getCorrAnsers() {
         corrAnswers[i] = questions[i]["corr_answer"];
     }
     const p_corr = document.createElement("p");
-    console.log(Object.entries(usr_answers))
+    // console.log(Object.entries(usr_answers))
     p_corr.innerText = Object.entries(corrAnswers);
     p_corr.id = "corr_answers"
     p_corr.style.backgroundColor = "lightgreen"
