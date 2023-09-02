@@ -1,6 +1,30 @@
 const langBtn = document.getElementById("lang-btn");
 const langForm = document.getElementById("lang-form");
 const body = document.querySelector("body")
+let answers = {
+}
+// let answers = {
+//     0: 0,
+//     1: 0,
+//     2: 0,
+//     3: 0,
+//     4: 0,
+//     5: 0,
+//     6: 0,
+//     7: 0,
+//     8: 0,
+//     9: 0,
+//     10: 0,
+//     11: 0,
+//     12: 0,
+//     13: 0,
+//     14: 0,
+//     15: 0,
+//     16: 0,
+//     17: 0,
+//     18: 0,
+//     19: 0,
+// }
 
 async function getAllLanguages() {
     try {
@@ -91,7 +115,8 @@ async function showQuestion(parent, questions, index) {
         //answers input
         const answerInp = document.createElement("input");
         answerInp.type = 'radio';
-        answerInp.name = `question${index}`
+        // answerInp.name = `question${index}`
+        answerInp.name = `question`;
         answerInp.value = i;
         answerInp.id = `qAns_${index}_${i}`;
         //answers label
@@ -110,6 +135,7 @@ async function showQuestion(parent, questions, index) {
         prevButton.classList = ["prev-btn", "list-btn"];
         prevButton.innerText = "<"; // find font awesome icon for "previous"
         parent.append(prevButton);
+        prevButton.addEventListener("click", saveTheAnswer)
         prevButton.addEventListener("click", showPrevQuestion)
     }
 
@@ -118,9 +144,10 @@ async function showQuestion(parent, questions, index) {
         nextButton.classList = ["next-btn", "list-btn"];
         nextButton.innerText = ">"; // find font awesome icon for "next"
         parent.append(nextButton);
+        nextButton.addEventListener("click", saveTheAnswer)
         nextButton.addEventListener("click", showNextQuestion)
     }
-
+    
     function showNextQuestion() {
         parent.innerText = "";
         showQuestion(parent, questions, index + 1);
@@ -152,6 +179,26 @@ async function displayImg(element, image_id) {
     }
 
 }
+
+async function saveTheAnswer() {
+    // get inputs
+    let answer = -1;
+    let questionNum = -1;
+    const inputName = `question`
+    const ansInputs = document.getElementsByName(inputName);
+    for (i = 0; i < ansInputs.length; i++) {
+        if (ansInputs[i].checked) {
+            answer = Number(ansInputs[i].value);
+            //get question number from its id
+            const questionNum = ansInputs[i].id.split("_")[1];
+            // save answer to global answers
+            answers[questionNum] = answer;
+            console.log(answers)
+        }
+    }
+
+}
+
 
 getAllLanguages()
 langBtn.addEventListener('click', getQuestions)
