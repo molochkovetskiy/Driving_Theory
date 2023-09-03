@@ -33,7 +33,7 @@ function displayAllLanguages(element, data) {
         newInputLabel.for = newInput.id;
         newInputLabel.innerText = data[i]['code'];
         newInputLabel.classList.add("form-check-label");
-        
+
         element.append(newInput, newInputLabel);
     }
 }
@@ -106,6 +106,11 @@ function renderSideMenu(parent, questions) {
 
     }
     parent.append(sideQuestionsBox);
+    const timeSpan = document.createElement("span");
+    timeSpan.id = "time"
+    parent.append(timeSpan)
+    const twentyMinutes = 20 * 60;
+    startTimer(twentyMinutes, timeSpan);
 }
 
 //clean it up!
@@ -248,14 +253,14 @@ function showSubmitButton() {
     submitButton.innerText = "OK!"; // add font awesome icon to submit
     // getting right answers
     submitButton.addEventListener("click", saveTheAnswer)
-    submitButton.addEventListener("click", getCorrAnsers);
+    submitButton.addEventListener("click", getCorrAnswers);
     const sidebarDiv = document.getElementById("side-menu-div");
     sidebarDiv.append(submitButton)
 }
 
-async function getCorrAnsers() {
+async function getCorrAnswers() {
     // fill corrAnswers
-    for (let i=0; i<questions.length; i++) {
+    for (let i = 0; i < questions.length; i++) {
         corrAnswers[i] = questions[i]["corr_answer"]
     }
 
@@ -281,7 +286,7 @@ async function getCorrAnsers() {
 
     // renderSideMenu(resMenuDiv, questions);
     let corrAnsCounter = 0;
-    for (let i=0; i < questions.length; i++) {
+    for (let i = 0; i < questions.length; i++) {
         if (i in usr_answers && usr_answers[i] == corrAnswers[i]) {
             corrAnsCounter++;
         }
@@ -289,8 +294,6 @@ async function getCorrAnsers() {
     const resultScore = document.createElement("h2");
     resultScore.innerText = `You answered right for ${corrAnsCounter} questions of ${questions.length} questions total.`
     resMenuDiv.append(resultScore)
-
-
 
     // go throgh all questions and display each
     for (let index = 0; index < questions.length; index++) {
@@ -304,10 +307,6 @@ async function getCorrAnsers() {
         questionOfQuestion.innerText = question["question"];
         questionOfQuestion.className = "answered-question"
         questionBoxDiv.append(questionOfQuestion);
-
-
-        console.log(usr_answers[index])
-        console.log(corrAnswers[index])
 
         if (usr_answers[index] != corrAnswers[index]) {
             questionOfQuestion.classList.add("wrong-answer");
@@ -353,9 +352,26 @@ async function getCorrAnsers() {
         }
         questionBoxDiv.append(answersBox);
         questionsBox.append(questionBoxDiv);
+    }
+}
+
+function startTimer(duration, display) {
+    var timer = duration, minutes, seconds;
+    setInterval(function () {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.textContent = minutes + ":" + seconds;
+
+        if (--timer < 0) {
+            timer = duration;
+            saveTheAnswer();
+            getCorrAnswers();
         }
-
-
+    }, 1000);
 }
 
 getAllLanguages()
