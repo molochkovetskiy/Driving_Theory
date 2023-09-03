@@ -31,7 +31,9 @@ function displayAllLanguages(element, data) {
         newInput.id = `langInput${data[i]['id']}`;
         const newInputLabel = document.createElement("label");
         newInputLabel.for = newInput.id;
-        newInputLabel.innerText = data[i]['code']
+        newInputLabel.innerText = data[i]['code'];
+        newInputLabel.classList.add("form-check-label");
+        
         element.append(newInput, newInputLabel);
     }
 }
@@ -120,7 +122,7 @@ async function showQuestion(parent, questions, index) {
     const question = questions[index];
     const questionOfQuestion = document.createElement("h3");
     questionOfQuestion.innerText = question["question"];
-    questionOfQuestion.className = "question"
+    questionOfQuestion.className = "question";
     parent.append(questionOfQuestion);
 
     //image
@@ -142,11 +144,13 @@ async function showQuestion(parent, questions, index) {
         answerInp.name = `question`;
         answerInp.value = i;
         answerInp.id = `qAns_${index}_${i}`;
+        answerInp.classList.add("form-check-input");
         //answers label
         const answerLabel = document.createElement("label");
         answerLabel.for = answerInp.id;
         const answerName = `answer${i}`;
         answerLabel.innerText = question[answerName];
+        answerLabel.classList.add("form-check-label");
         // display if answer to question was given
         if (index in usr_answers && i == usr_answers[curr_question]) {
             answerInp.checked = true;
@@ -205,7 +209,9 @@ async function displayImg(element, image_id) {
                 let data = await response.json();
                 const image = document.createElement("img");
                 image.src = data["image_link"];
-                image.class = "picture"
+                image.classList.add("rounded");
+                image.classList.add("mx-auto");
+                image.classList.add("d-block");
                 element.append(image);
             }
         }
@@ -296,7 +302,7 @@ async function getCorrAnsers() {
         const question = questions[index];
         const questionOfQuestion = document.createElement("h3");
         questionOfQuestion.innerText = question["question"];
-        questionOfQuestion.className = "question"
+        questionOfQuestion.className = "answered-question"
         questionBoxDiv.append(questionOfQuestion);
 
 
@@ -313,7 +319,7 @@ async function getCorrAnsers() {
         const answers = [question['answer1'], question['answer2'], question['answer3'], question['answer4']];
 
         const answersBox = document.createElement("div");
-        answersBox.id = "answers-box";
+        answersBox.classList = "answers-box";
         for (let i = 1; i < (answers.length + 1); i++) {
             // answers div
             const answerDiv = document.createElement("div");
@@ -322,6 +328,7 @@ async function getCorrAnsers() {
             const answerInp = document.createElement("input");
             answerInp.type = 'radio';
             answerInp.name = `question${index}`
+            answerInp.classList.add("form-check-input");
             // answerInp.name = `question`;
             answerInp.value = i;
             answerInp.id = `qAns_${index}_${i}`;
@@ -330,6 +337,8 @@ async function getCorrAnsers() {
             answerLabel.for = answerInp.id;
             const answerName = `answer${i}`;
             answerLabel.innerText = question[answerName];
+            answerLabel.classList.add("form-check-label");
+
 
             if (i == corrAnswers[index]) {
                 answerLabel.classList.add("corr-answer");

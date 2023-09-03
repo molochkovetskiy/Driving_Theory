@@ -85,3 +85,34 @@ body {
 .wrong-answer {
     background-color: lightsalmon;
 }
+
+.answered-question {
+    margin: 30px;
+    width: fit-content;
+}
+
+.answers-box {
+    margin: 30px;
+}
+
+.navbar {
+    width: 100vw;
+}
+
+#answers-box {
+    margin: 0 0 50px 50px;
+}
+
+#list-buttons{
+    position: fixed;
+    bottom: 100px;
+}
+
+.question {
+    margin-left: 20px;
+}
+
+#res-menu-div {
+    border: 4px solid red;
+    width: fit-content;
+}
