@@ -255,15 +255,85 @@ function showSubmitButton() {
     sidebarDiv.append(submitButton)
 }
 
-function getCorrAnsers() {
-    for (let i = 0; i < questions.length; i++) {
-        corrAnswers[i] = questions[i]["corr_answer"];
+async function getCorrAnsers() {
+    // fill corrAnswers
+    for (let i=0; i<questions.length; i++) {
+        corrAnswers[i] = questions[i]["corr_answer"]
     }
-    const p_corr = document.createElement("p");
-    p_corr.innerText = Object.entries(corrAnswers);
-    p_corr.id = "corr_answers"
-    p_corr.style.backgroundColor = "lightgreen"
-    body.append(p_corr);
+
+    // div for all results
+    const resExamDiv = document.createElement("div");
+    resExamDiv.id = "res-exam";
+    body.innerText = "";
+
+    // res menu creation
+    const resMenuDiv = document.createElement("div");
+    resMenuDiv.id = "res-menu-div";
+
+
+    // box for all questions
+    const questionsBox = document.createElement("div");
+    questionsBox.id = "quiestions-box";
+
+    // appending prepared divs to body
+    resExamDiv.append(resMenuDiv, questionsBox);
+    body.append(resExamDiv);
+
+    renderSideMenu(resMenuDiv, questions);
+
+    // go throgh all questions and display each
+    for (let index = 0; index < questions.length; index++) {
+        //box for 1 question
+        const questionBoxDiv = document.createElement("div");
+        questionBoxDiv.id = `questions-box-div-#${i}`;
+        questionBoxDiv.className = "text-secondary-emphasis";
+        // question
+        const question = questions[index];
+        const questionOfQuestion = document.createElement("h3");
+        questionOfQuestion.innerText = question["question"];
+        questionOfQuestion.className = "question"
+        questionBoxDiv.append(questionOfQuestion);
+        //image
+        await displayImg(questionBoxDiv, question["image_id"]);
+        // all 4 answers
+        const answers = [question['answer1'], question['answer2'], question['answer3'], question['answer4']];
+
+        const answersBox = document.createElement("div");
+        answersBox.id = "answers-box";
+        for (let i = 1; i < (answers.length + 1); i++) {
+            // answers div
+            const answerDiv = document.createElement("div");
+            answerDiv.id = `qAnsDiv_${index}_${i}`
+            // answers input
+            const answerInp = document.createElement("input");
+            answerInp.type = 'radio';
+            answerInp.name = `question${index}`
+            // answerInp.name = `question`;
+            answerInp.value = i;
+            answerInp.id = `qAns_${index}_${i}`;
+            // answers label
+            const answerLabel = document.createElement("label");
+            answerLabel.for = answerInp.id;
+            const answerName = `answer${i}`;
+            answerLabel.innerText = question[answerName];
+
+            if (i == corrAnswers[index]) {
+                answerLabel.classList.add("corr-answer");
+                // answerLabel.style.backgroundColor = "lightgreen"
+            }
+            // display if answer to question was given         
+            if (index in usr_answers && i == usr_answers[index]) {
+                answerInp.checked = true;
+            }
+            // append
+            answersBox.append(answerDiv);
+            answerDiv.append(answerInp, answerLabel);
+        }
+        questionBoxDiv.append(answersBox);
+        questionsBox.append(questionBoxDiv);
+        }
+
+
 }
 
 getAllLanguages()

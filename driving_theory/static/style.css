@@ -77,3 +77,7 @@ body {
     position: absolute;
     bottom: 0;
 }
+
+.corr-answer {
+    background-color: #28a745;
+}
