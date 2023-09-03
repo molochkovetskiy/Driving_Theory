@@ -16,10 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from exam.views import  LanguagesAPIView, FillDB, QuestionsAPIView 
+from exam.views import HomePageView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls') ),
     path('exam/', include('exam.urls') ),
+    path('', HomePageView.as_view(), name='index'),
 ]
