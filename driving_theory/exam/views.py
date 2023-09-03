@@ -1,19 +1,22 @@
 from typing import Any, Dict
+from django.forms.models import BaseModelForm
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse_lazy
 import requests
 import random
 from .models import Languages, Categories, Questions, ImagesOfQuestions
 from .serializers import LanguagesSerializer, CategoriesSerializer, QuestionsSerializer, ImagesOfQuestionsSerializer
-from .forms import RegisterUserForm
+from .forms import RegisterUserForm, LoginUserForm
 
 from django.views.generic.edit import CreateView
+from django.contrib.auth.views import LoginView
+from django.contrib.auth import login, logout
 
 from bs4 import BeautifulSoup
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 # from .permissions import IsDepartmentAdmin
 # from django.forms import model_to_dict
 
@@ -141,5 +144,20 @@ class RegisterUser(CreateView):
     template_name = 'registration.html'
     success_url = reverse_lazy('login')
 
-def login(request):
-    return HttpResponse("Authorization")
+    def form_valid(self, form):
+        user = form.save()
+        login(self.request, user)
+        return redirect('exam')
+
+
+class LoginUser(LoginView):
+    form_class = LoginUserForm
+    template_name = 'login.html'
+
+    def get_success_url(self):
+        return reverse_lazy('exam')
+    
+
+def logout_user(request):
+    logout(request)
+    return redirect('login')
