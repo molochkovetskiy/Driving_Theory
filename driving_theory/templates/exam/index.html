@@ -1,0 +1,16 @@
+{% extends 'exam/base.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Driving Theory{% endblock %}</title>
+</head>
+<body>
+    {% block pagecontent %}
+    {% include 'partials/nav-bar.html' %} <!--Add this-->
+    <h2>INDEX PAGE</h2>
+    {% endblock %}
+</body>
+</html>

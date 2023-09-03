@@ -1,0 +1,17 @@
+{% extends 'exam/base.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Results{% endblock %}</title>
+</head>
+<body>
+    {% block pagecontent %}
+    {% include 'partials/nav-bar.html' %} <!--Add this-->
+    <h3>Here are all users results</h3>
+    {% endblock %}
+
+</body>
+</html>
