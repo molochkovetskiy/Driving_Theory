@@ -61,7 +61,8 @@ async function getQuestions() {
 }
 
 async function renderExam(questions) {
-    body.innerText = "";
+    const startExamDiv = document.getElementById("start-exam");
+    startExamDiv.innerText = "";
     //box for 1 question
     const questionsBoxDiv = document.createElement("div");
     questionsBoxDiv.id = "questions-box-div";
@@ -69,6 +70,7 @@ async function renderExam(questions) {
     sideMenuDiv.id = "side-menu-div";
     const questionsDiv = document.createElement("div");
     questionsDiv.id = "questions-div";
+    questionsDiv.className = "text-secondary-emphasis";
 
     body.append(questionsBoxDiv);
     questionsBoxDiv.append(sideMenuDiv, questionsDiv);
@@ -252,7 +254,6 @@ function showSubmitButton() {
     const sidebarDiv = document.getElementById("side-menu-div");
     sidebarDiv.append(submitButton)
 }
-
 
 function getCorrAnsers() {
     for (let i = 0; i < questions.length; i++) {

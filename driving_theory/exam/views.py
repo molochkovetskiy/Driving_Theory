@@ -17,6 +17,7 @@ from bs4 import BeautifulSoup
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.shortcuts import render, redirect
+from django.views.generic import TemplateView  # Import TemplateView
 # from .permissions import IsDepartmentAdmin
 # from django.forms import model_to_dict
 
@@ -65,9 +66,8 @@ class FillDB(APIView):
             # "ar": "fe998a65-83a3-45e5-b4b7-3e0ce86ae072",
             "fr": "a106ea08-ff97-4971-8720-c85bdd3d2264",
         }
-        
-        for language_code in apiCodes.keys():
 
+        for language_code in apiCodes.keys():
 
             apiUrl = f'https://data.gov.il/api/3/action/datastore_search?resource_id={apiCodes[language_code]}&limit=2000'
             response = requests.get(apiUrl)
@@ -101,9 +101,9 @@ class FillDB(APIView):
                         if len(ImagesOfQuestions.objects.filter(num_title=question[:4])) < 1:
                             ImagesOfQuestions.objects.create(
                                 num_title=question[:4],
-                                image_link = image_link,
+                                image_link=image_link,
                             )
-                
+
                 if len(Languages.objects.filter(code=language)) < 1:
                     Languages.objects.create(
                         code=language,
@@ -116,7 +116,8 @@ class FillDB(APIView):
                     )
 
                 if ImagesOfQuestions.objects.filter(num_title=question[:4]).exists():
-                    image_exists = ImagesOfQuestions.objects.get(num_title=question[:4])
+                    image_exists = ImagesOfQuestions.objects.get(
+                        num_title=question[:4])
                 else:
                     image_exists = None
 
@@ -128,16 +129,20 @@ class FillDB(APIView):
                         answer3=answer3,
                         answer4=answer4,
                         corr_answer=correct_answer_index,
-                        image_id = image_exists,
-                        category_id = Categories.objects.get(name=category),
+                        image_id=image_exists,
+                        category_id=Categories.objects.get(name=category),
                     )
 
         return Response({"status": "ok"})
 
+class HomePageView(TemplateView):
+    template_name = "./exam/index.html"
 
-def exam(request):
-    return render(request, 'exam/index.html')
+class ExamPageView(TemplateView):
+    template_name = "./exam/exam.html"    
 
+class RresultsView(TemplateView):
+    template_name = "./exam/results.html"
 
 class RegisterUser(CreateView):
     form_class = RegisterUserForm

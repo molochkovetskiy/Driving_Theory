@@ -3,13 +3,13 @@ body {
     padding: 0;
     box-sizing: border-box;
     background-color: antiquewhite;
+    width: 100vw;
+    height: 100vh;
 }
 
 #questions-box-div {
     display: flex;
     flex-direction: row;
-    width: 100vw;
-    height: 100vh;
 }
 
 #side-questions-box {
@@ -30,17 +30,16 @@ body {
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
-    background-color: purple;
+    background-color: lightgray;
 }
 
 #questions-div {
     width: 95%;
     height: 100%;
-    /* padding-top: 10%; */
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: cadetblue;
+    /* background-color: cadetblue; */
 }
 
 .link-to-question {
@@ -58,18 +57,23 @@ body {
     flex-direction: column;
     align-items: flex-start;
     align-self: flex-start;
-    margin: 40px;
+    /* margin: 40px; */
 }
 
-.picture {
+/* .picture {
     margin: 40px;
 }
 
 .question {
     margin: 40px;
-}
+} */
 
 .list-btn {
     width: 80px;
     height: 80px;
+}
+
+#footer {
+    position: absolute;
+    bottom: 0;
 }
