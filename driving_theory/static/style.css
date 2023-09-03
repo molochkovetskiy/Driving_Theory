@@ -74,10 +74,14 @@ body {
 }
 
 #footer {
-    position: absolute;
+    position: fixed;
     bottom: 0;
 }
 
 .corr-answer {
     background-color: #28a745;
+}
+
+.wrong-answer {
+    background-color: lightsalmon;
 }

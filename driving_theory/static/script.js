@@ -240,16 +240,8 @@ function showSubmitButton() {
     const submitButton = document.createElement("button");
     submitButton.id = "submit-answers";
     submitButton.innerText = "OK!"; // add font awesome icon to submit
-    // displaying given answers
-    submitButton.addEventListener("click", () => {
-        const p_user = document.createElement("p");
-        p_user.innerText = Object.entries(usr_answers);
-        p_user.id = "usr_answers";
-
-        body.innerText = "";
-        body.append(p_user);
-    })
     // getting right answers
+    submitButton.addEventListener("click", saveTheAnswer)
     submitButton.addEventListener("click", getCorrAnsers);
     const sidebarDiv = document.getElementById("side-menu-div");
     sidebarDiv.append(submitButton)
@@ -264,7 +256,9 @@ async function getCorrAnsers() {
     // div for all results
     const resExamDiv = document.createElement("div");
     resExamDiv.id = "res-exam";
-    body.innerText = "";
+    //clean the screan
+    const examDiv = document.getElementById("questions-box-div");
+    examDiv.remove();
 
     // res menu creation
     const resMenuDiv = document.createElement("div");
@@ -279,7 +273,18 @@ async function getCorrAnsers() {
     resExamDiv.append(resMenuDiv, questionsBox);
     body.append(resExamDiv);
 
-    renderSideMenu(resMenuDiv, questions);
+    // renderSideMenu(resMenuDiv, questions);
+    let corrAnsCounter = 0;
+    for (let i=0; i < questions.length; i++) {
+        if (i in usr_answers && usr_answers[i] == corrAnswers[i]) {
+            corrAnsCounter++;
+        }
+    }
+    const resultScore = document.createElement("h2");
+    resultScore.innerText = `You answered right for ${corrAnsCounter} questions of ${questions.length} questions total.`
+    resMenuDiv.append(resultScore)
+
+
 
     // go throgh all questions and display each
     for (let index = 0; index < questions.length; index++) {
@@ -293,6 +298,15 @@ async function getCorrAnsers() {
         questionOfQuestion.innerText = question["question"];
         questionOfQuestion.className = "question"
         questionBoxDiv.append(questionOfQuestion);
+
+
+        console.log(usr_answers[index])
+        console.log(corrAnswers[index])
+
+        if (usr_answers[index] != corrAnswers[index]) {
+            questionOfQuestion.classList.add("wrong-answer");
+        }
+
         //image
         await displayImg(questionBoxDiv, question["image_id"]);
         // all 4 answers
@@ -319,7 +333,6 @@ async function getCorrAnsers() {
 
             if (i == corrAnswers[index]) {
                 answerLabel.classList.add("corr-answer");
-                // answerLabel.style.backgroundColor = "lightgreen"
             }
             // display if answer to question was given         
             if (index in usr_answers && i == usr_answers[index]) {
