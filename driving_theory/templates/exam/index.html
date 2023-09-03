@@ -1,18 +1,20 @@
 {% extends 'exam/base.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Driving Theory{% endblock %}</title>
-    {% block extra_head %}
-    <link rel="stylesheet" href="/static/basic_pages.css">
-    {% endblock %}
-</head>
-<body>
-    {% block pagecontent %}
-    <h2>INDEX PAGE</h2>
-    {% endblock %}
-</body>
-</html>
+{% block title %}Driving Theory{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="/static/basic_pages.css">
+{% endblock %}
+
+{% block pagecontent %}
+<div class="wrapper">
+    <div class="centered-block">
+        <h1>Welcome to DriveWise!</h1>
+        <p>Navigating the road to becoming a confident and knowledgeable driver has never been easier. At DriveWise,
+            we're here to guide you through the exciting journey of mastering driving theory.</p>
+
+        <!-- {% if request.user.is_authenticated %}
+        <a href="{% url 'exam' %}">Are you ready? Let's practice</a>
+        {% endif %} -->
+    </div>
+</div>
+{% endblock %}
