@@ -11,8 +11,10 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" type="text/css" />
 </head>
 <body>
+    {% include 'partials/nav-bar.html' %} 
     {% block pagecontent %}
     {% endblock %}
+    {% include 'partials/footer.html' %} 
     <script src="{% static 'js/jquery.com_jquery-3.7.1.js' %}"></script>
     <script src="{% static 'js/bootstrap.bundle.js' %}"></script> <!-- This is how to include a static file -->
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script> 
