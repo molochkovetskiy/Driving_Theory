@@ -1,8 +1,13 @@
-from django.http import JsonResponse
+from typing import Any, Dict
+from django.http import JsonResponse, HttpResponse
+from django.urls import reverse_lazy
 import requests
 import random
 from .models import Languages, Categories, Questions, ImagesOfQuestions
 from .serializers import LanguagesSerializer, CategoriesSerializer, QuestionsSerializer, ImagesOfQuestionsSerializer
+from .forms import RegisterUserForm
+
+from django.views.generic.edit import CreateView
 
 from bs4 import BeautifulSoup
 
@@ -129,3 +134,12 @@ class FillDB(APIView):
 
 def exam(request):
     return render(request, 'exam/index.html')
+
+
+class RegisterUser(CreateView):
+    form_class = RegisterUserForm
+    template_name = 'registration.html'
+    success_url = reverse_lazy('login')
+
+def login(request):
+    return HttpResponse("Authorization")
