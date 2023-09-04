@@ -1,25 +1,18 @@
-{% extends 'exam/base.html' %} <!-- Add this for inheritance -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Exam{% endblock %}</title>
-    {% block extra_head %}
-    <link rel="stylesheet" href="/static/style.css">
-    {% endblock %}
-</head>
-<body>
-    {% block pagecontent %}
-    <div id="start-exam">
-        <h1>Exam!</h1>
-        <h2>Choose your language</h2>
-        <form id="lang-form">
-        </form>
-        <button id="lang-btn">Submit</button>
-        <script src="/static/script.js"></script>
-    </div>
-    {% endblock %}
+{% extends 'exam/base.html' %}
+<!-- Add this for inheritance -->
 
-</body>
-</html>
+{% block title %}Exam{% endblock %} 
+
+{% block extra_head %}
+<link rel="stylesheet" href="/static/style.css" />
+{% endblock %} 
+
+{% block pagecontent %}
+<div id="start-exam">
+  <h1>Exam!</h1>
+  <h2>Choose your language</h2>
+  <form id="lang-form"></form>
+  <button id="lang-btn">Submit</button>
+  <script src="/static/script.js"></script>
+</div>
+{% endblock %}
