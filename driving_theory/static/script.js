@@ -148,10 +148,8 @@ function startTimer(duration, display) {
     setInterval(function () {
         minutes = parseInt(timer / 60, 10);
         seconds = parseInt(timer % 60, 10);
-
         minutes = minutes < 10 ? "0" + minutes : minutes;
         seconds = seconds < 10 ? "0" + seconds : seconds;
-
         display.textContent = minutes + ":" + seconds;
 
         if (--timer < 0) {
@@ -306,12 +304,12 @@ async function saveTheAnswer() {
     console.log("ansInputs.length: " + ansInputs.length);
     for (i = 0; i < ansInputs.length; i++) {
         if (ansInputs[i].checked) {
-            answer = Number(ansInputs[i].value) - 1;
+            answer = Number(ansInputs[i].value);
             //get question number from its id
             questionNum = ansInputs[i].id.split("_")[1];
             console.log("questionNum: " + questionNum)
             // save answer to global usr_answers
-            usr_answers[questionNum] = answer + 1;
+            usr_answers[questionNum] = answer;
             // highlighting already answered questions
             let sideQuestionLink = document.getElementById(`q_s_div_${questionNum}`);
             sideQuestionLink.style.backgroundColor = "lightgreen";
@@ -330,7 +328,6 @@ function showSubmitButton() {
     const sidebarDiv = document.getElementById("side-menu-div");
     sidebarDiv.append(submitButton)
 }
-
 
 /* Results */
 
