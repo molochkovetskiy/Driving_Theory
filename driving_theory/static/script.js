@@ -6,6 +6,9 @@ let usr_answers = {};
 let corrAnswers = {};
 let curr_question = 0;
 
+
+/* Get questions and start exam */
+
 async function getAllLanguages() {
     try {
         const url = "http://127.0.0.1:8000/exam/languages/";
@@ -82,6 +85,9 @@ async function renderExam(questions) {
     showSubmitButton();
 }
 
+
+/* Exam side menu */
+
 function renderSideMenu(parent, questions) {
     const sideQuestionsBox = document.createElement("div");
     sideQuestionsBox.id = "side-questions-box"
@@ -113,94 +119,160 @@ function renderSideMenu(parent, questions) {
     startTimer(twentyMinutes, timeSpan);
 }
 
-//clean it up!
 async function showQuestion(parent, questions, index) {
-    // highlighting current question in side bar
-    let sideQuestionLink = document.getElementById(`q_s_div_${curr_question}`);
-    sideQuestionLink.style.border = "none";
-    curr_question = index;
-    sideQuestionLink = document.getElementById(`q_s_div_${curr_question}`);
-    sideQuestionLink.style.border = "1px solid red";
-
-
-    // question
+    parent.innerHTML = "";
+    highlightSideBarQuestion(index);
     const question = questions[index];
+    renderQuestionText(parent, question);
+    await displayImg(parent, question["image_id"]);
+    renderAnswerChoices(parent, question, index);
+    renderListButtons(parent, questions, index);
+}
+
+function highlightSideBarQuestion(index) {
+    removeHighlightFromSideBarQuestion();
+    curr_question = index;
+    const sideQuestionLink = document.getElementById(`q_s_div_${curr_question}`);
+    sideQuestionLink.style.border = "1px solid red";
+}
+
+function removeHighlightFromSideBarQuestion() {
+    const sideQuestionLink = document.getElementById(`q_s_div_${curr_question}`);
+    if (sideQuestionLink) {
+        sideQuestionLink.style.border = "1px solid black";
+    }
+}
+
+function startTimer(duration, display) {
+    var timer = duration, minutes, seconds;
+    setInterval(function () {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.textContent = minutes + ":" + seconds;
+
+        if (--timer < 0) {
+            timer = duration;
+            saveTheAnswer();
+            getCorrAnswers();
+        }
+    }, 1000);
+}
+
+
+/* Question render */
+
+function renderQuestionText(parent, question) {
     const questionOfQuestion = document.createElement("h3");
     questionOfQuestion.innerText = question["question"];
     questionOfQuestion.className = "question";
-    parent.append(questionOfQuestion);
+    parent.appendChild(questionOfQuestion);
+}
 
-    //image
-    await displayImg(parent, question["image_id"]);
+async function displayImg(parent, imageId) {
+    try {
+        if (imageId) {
+            const url = `http://127.0.0.1:8000/exam/get-img/${imageId}`;
+            const response = await fetch(url);
 
-    // all 4 answers
+            if (!response.ok) {
+                throw new Error("Couldn't get the image");
+            } else {
+                const data = await response.json();
+                const image = createImageElement(data["image_link"]);
+                parent.appendChild(image);
+            }
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+function createImageElement(src) {
+    const image = document.createElement("img");
+    image.src = src;
+    image.classList.add("rounded");
+    image.classList.add("mx-auto");
+    image.classList.add("d-block");
+    return image;
+}
+
+function renderAnswerChoices(parent, question, index) {
     const answers = [question['answer1'], question['answer2'], question['answer3'], question['answer4']];
-
     const answersBox = document.createElement("div");
     answersBox.id = "answers-box";
-    for (let i = 1; i < (answers.length + 1); i++) {
-        // answers div
-        const answerDiv = document.createElement("div");
-        answerDiv.id = `qAnsDiv_${index}_${i}`
-        //answers input
-        const answerInp = document.createElement("input");
-        answerInp.type = 'radio';
-        // answerInp.name = `question${index}`
-        answerInp.name = `question`;
-        answerInp.value = i;
-        answerInp.id = `qAns_${index}_${i}`;
-        answerInp.classList.add("form-check-input");
-        //answers label
-        const answerLabel = document.createElement("label");
-        answerLabel.for = answerInp.id;
-        const answerName = `answer${i}`;
-        answerLabel.innerText = question[answerName];
-        answerLabel.classList.add("form-check-label");
-        // display if answer to question was given
-        if (index in usr_answers && i == usr_answers[curr_question]) {
+
+    answers.forEach((answer, i) => {
+        const answerDiv = createAnswerDiv(index, i);
+        const answerInp = createAnswerInput(index, i);
+        const answerLabel = createAnswerLabel(answer, index, i);
+
+        if (index in usr_answers && i === usr_answers[curr_question]) {
             answerInp.checked = true;
         }
-        //append
-        answersBox.append(answerDiv);
-        answerDiv.append(answerInp, answerLabel);
-    }
-    parent.append(answersBox);
 
-    //list buttons
+        appendAnswerElements(answerDiv, answerInp, answerLabel);
+        answersBox.appendChild(answerDiv);
+    });
+
+    parent.appendChild(answersBox);
+}
+
+function createAnswerDiv(index, i) {
+    const answerDiv = document.createElement("div");
+    answerDiv.id = `qAnsDiv_${index}_${i}`;
+    return answerDiv;
+}
+
+function createAnswerInput(index, i) {
+    const answerInp = document.createElement("input");
+    answerInp.type = 'radio';
+    answerInp.name = 'question';
+    answerInp.value = i;
+    answerInp.id = `qAns_${index}_${i}`;
+    answerInp.classList.add("form-check-input");
+    return answerInp;
+}
+
+function createAnswerLabel(answer, index, i) {
+    const answerLabel = document.createElement("label");
+    answerLabel.for = `qAns_${index}_${i}`;
+    answerLabel.innerText = answer;
+    answerLabel.classList.add("form-check-label");
+    return answerLabel;
+}
+
+function appendAnswerElements(answerDiv, answerInp, answerLabel) {
+    answerDiv.appendChild(answerInp);
+    answerDiv.appendChild(answerLabel);
+}
+
+function renderListButtons(parent, questions, index) {
     const listButtons = document.createElement("div");
     listButtons.id = "list-buttons";
 
     if (index > 0) {
-        const prevButton = document.createElement("button");
-        prevButton.classList.add("prev-btn");
-        prevButton.classList.add("list-btn");
-        prevButton.innerText = "<"; // find font awesome icon for "previous"
-        listButtons.append(prevButton);
-        prevButton.addEventListener("click", saveTheAnswer)
-        prevButton.addEventListener("click", showPrevQuestion)
+        addButtonToList(listButtons, "prev-btn", "prev-button", "<", () => showQuestion(parent, questions, index - 1));
     }
 
-    if (index < 19) {
-        const nextButton = document.createElement("button");
-        nextButton.classList.add("next-btn");
-        nextButton.classList.add("list-btn");
-        nextButton.innerText = ">"; // find font awesome icon for "next"
-        listButtons.append(nextButton);
-        nextButton.addEventListener("click", saveTheAnswer)
-        nextButton.addEventListener("click", showNextQuestion)
-    }
-    parent.append(listButtons);
-
-    function showNextQuestion() {
-        parent.innerText = "";
-        showQuestion(parent, questions, index + 1);
+    if (index < questions.length - 1) {
+        addButtonToList(listButtons, "next-btn", "next-button", ">", () => showQuestion(parent, questions, index + 1));
     }
 
-    function showPrevQuestion() {
-        parent.innerText = "";
-        showQuestion(parent, questions, index - 1);
-    }
+    parent.appendChild(listButtons);
+}
 
+function addButtonToList(listButtons, buttonClass, buttonText, innerText, clickHandler) {
+    const button = document.createElement("button");
+    button.classList.add(buttonClass);
+    button.classList.add("list-btn");
+    button.innerText = innerText;
+    button.addEventListener("click", saveTheAnswer);
+    button.addEventListener("click", clickHandler);
+    listButtons.appendChild(button);
 }
 
 async function displayImg(element, image_id) {
@@ -229,22 +301,23 @@ async function saveTheAnswer() {
     // get inputs
     let answer = -1;
     let questionNum = -1;
-    const inputName = `question`
-    const ansInputs = document.getElementsByName(inputName);
+    const inputName = `question`;
+    const ansInputs = document.getElementsByTagName("input");
+    console.log("ansInputs.length: " + ansInputs.length);
     for (i = 0; i < ansInputs.length; i++) {
         if (ansInputs[i].checked) {
-            answer = Number(ansInputs[i].value);
+            answer = Number(ansInputs[i].value) - 1;
             //get question number from its id
-            const questionNum = ansInputs[i].id.split("_")[1];
+            questionNum = ansInputs[i].id.split("_")[1];
+            console.log("questionNum: " + questionNum)
             // save answer to global usr_answers
-            usr_answers[questionNum] = answer;
+            usr_answers[questionNum] = answer + 1;
             // highlighting already answered questions
-            curr_question = questionNum;
-            let sideQuestionLink = document.getElementById(`q_s_div_${curr_question}`);
+            let sideQuestionLink = document.getElementById(`q_s_div_${questionNum}`);
             sideQuestionLink.style.backgroundColor = "lightgreen";
         }
     }
-
+    console.log("usr_answers: " + Object.entries(usr_answers))
 }
 
 function showSubmitButton() {
@@ -258,121 +331,146 @@ function showSubmitButton() {
     sidebarDiv.append(submitButton)
 }
 
+
+/* Results */
+
 async function getCorrAnswers() {
-    // fill corrAnswers
-    for (let i = 0; i < questions.length; i++) {
-        corrAnswers[i] = questions[i]["corr_answer"]
-    }
+    const corrAnswers = fillCorrAnswers();
+    const resExamDiv = createResultExamDiv();
+    const examDiv = clearScreen();
+    const resMenuDiv = createResultMenuDiv();
+    const questionsBox = createQuestionsBox();
 
-    // div for all results
-    const resExamDiv = document.createElement("div");
-    resExamDiv.id = "res-exam";
-    //clean the screan
-    const examDiv = document.getElementById("questions-box-div");
-    examDiv.remove();
-
-    // res menu creation
-    const resMenuDiv = document.createElement("div");
-    resMenuDiv.id = "res-menu-div";
-
-
-    // box for all questions
-    const questionsBox = document.createElement("div");
-    questionsBox.id = "quiestions-box";
-
-    // appending prepared divs to body
     resExamDiv.append(resMenuDiv, questionsBox);
     body.append(resExamDiv);
 
-    // renderSideMenu(resMenuDiv, questions);
-    let corrAnsCounter = 0;
-    for (let i = 0; i < questions.length; i++) {
-        if (i in usr_answers && usr_answers[i] == corrAnswers[i]) {
-            corrAnsCounter++;
-        }
-    }
-    const resultScore = document.createElement("h2");
-    resultScore.innerText = `You answered right for ${corrAnsCounter} questions of ${questions.length} questions total.`
-    resMenuDiv.append(resultScore)
+    const corrAnsCounter = countCorrectAnswers(corrAnswers);
+    const resultScore = createResultScoreElement(corrAnsCounter, questions.length);
+    resMenuDiv.append(resultScore);
 
-    // go throgh all questions and display each
     for (let index = 0; index < questions.length; index++) {
-        //box for 1 question
-        const questionBoxDiv = document.createElement("div");
-        questionBoxDiv.id = `questions-box-div-#${i}`;
-        questionBoxDiv.className = "text-secondary-emphasis";
-        // question
+        const questionBoxDiv = createQuestionBoxDiv(index);
         const question = questions[index];
-        const questionOfQuestion = document.createElement("h3");
-        questionOfQuestion.innerText = question["question"];
-        questionOfQuestion.className = "answered-question"
-        questionBoxDiv.append(questionOfQuestion);
+        const questionOfQuestion = createQuestionElement(question["question"]);
 
-        if (usr_answers[index] != corrAnswers[index]) {
+        if (usr_answers[index] !== corrAnswers[index]) {
             questionOfQuestion.classList.add("wrong-answer");
         }
 
-        //image
         await displayImg(questionBoxDiv, question["image_id"]);
-        // all 4 answers
-        const answers = [question['answer1'], question['answer2'], question['answer3'], question['answer4']];
+        const answersBox = createAnswersBox(index, question);
 
-        const answersBox = document.createElement("div");
-        answersBox.classList = "answers-box";
-        for (let i = 1; i < (answers.length + 1); i++) {
-            // answers div
-            const answerDiv = document.createElement("div");
-            answerDiv.id = `qAnsDiv_${index}_${i}`
-            // answers input
-            const answerInp = document.createElement("input");
-            answerInp.type = 'radio';
-            answerInp.name = `question${index}`
-            answerInp.classList.add("form-check-input");
-            // answerInp.name = `question`;
-            answerInp.value = i;
-            answerInp.id = `qAns_${index}_${i}`;
-            // answers label
-            const answerLabel = document.createElement("label");
-            answerLabel.for = answerInp.id;
-            const answerName = `answer${i}`;
-            answerLabel.innerText = question[answerName];
-            answerLabel.classList.add("form-check-label");
-
-
-            if (i == corrAnswers[index]) {
-                answerLabel.classList.add("corr-answer");
-            }
-            // display if answer to question was given         
-            if (index in usr_answers && i == usr_answers[index]) {
-                answerInp.checked = true;
-            }
-            // append
-            answersBox.append(answerDiv);
-            answerDiv.append(answerInp, answerLabel);
-        }
-        questionBoxDiv.append(answersBox);
+        questionBoxDiv.append(questionOfQuestion, answersBox);
         questionsBox.append(questionBoxDiv);
     }
 }
 
-function startTimer(duration, display) {
-    var timer = duration, minutes, seconds;
-    setInterval(function () {
-        minutes = parseInt(timer / 60, 10);
-        seconds = parseInt(timer % 60, 10);
-
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-        display.textContent = minutes + ":" + seconds;
-
-        if (--timer < 0) {
-            timer = duration;
-            saveTheAnswer();
-            getCorrAnswers();
-        }
-    }, 1000);
+function fillCorrAnswers() {
+    const corrAnswers = [];
+    for (let i = 0; i < questions.length; i++) {
+        corrAnswers[i] = questions[i]["corr_answer"];
+    }
+    return corrAnswers;
 }
+
+function createResultExamDiv() {
+    const resExamDiv = document.createElement("div");
+    resExamDiv.id = "res-exam";
+    return resExamDiv;
+}
+
+function clearScreen() {
+    const examDiv = document.getElementById("questions-box-div");
+    examDiv.remove();
+    return examDiv;
+}
+
+function createResultMenuDiv() {
+    const resMenuDiv = document.createElement("div");
+    resMenuDiv.id = "res-menu-div";
+    return resMenuDiv;
+}
+
+function createQuestionsBox() {
+    const questionsBox = document.createElement("div");
+    questionsBox.id = "quiestions-box";
+    return questionsBox;
+}
+
+function countCorrectAnswers(corrAnswers) {
+    let corrAnsCounter = 0;
+    for (let i = 0; i < questions.length; i++) {
+        if (i in usr_answers && usr_answers[i] === corrAnswers[i]) {
+            corrAnsCounter++;
+        }
+    }
+    return corrAnsCounter;
+}
+
+function createResultScoreElement(corrAnsCounter, totalQuestions) {
+    const resultScore = document.createElement("h2");
+    resultScore.innerText = `You answered right for ${corrAnsCounter} questions of ${totalQuestions} questions total.`;
+    return resultScore;
+}
+
+function createQuestionBoxDiv(index) {
+    const questionBoxDiv = document.createElement("div");
+    questionBoxDiv.id = `questions-box-div-#${index}`;
+    questionBoxDiv.className = "text-secondary-emphasis";
+    return questionBoxDiv;
+}
+
+function createQuestionElement(questionText) {
+    const questionOfQuestion = document.createElement("h3");
+    questionOfQuestion.innerText = questionText;
+    questionOfQuestion.className = "answered-question";
+    return questionOfQuestion;
+}
+
+function createAnswersBox(index, question) {
+    const answersBox = document.createElement("div");
+    answersBox.classList = "answers-box";
+
+    const answers = [question['answer1'], question['answer2'], question['answer3'], question['answer4']];
+    for (let i = 1; i <= answers.length; i++) {
+        const answerDiv = createAnswerDiv(index, i);
+        const answerInp = createAnswerInput(index, i);
+        const answerLabel = createAnswerLabel(answers[i - 1], index, i);
+
+        if (i === question["corr_answer"]) {
+            answerLabel.classList.add("corr-answer");
+        }
+
+        if (index in usr_answers && usr_answers[index] === i) {
+            answerInp.checked = true;
+        }
+
+        answerDiv.append(answerInp, answerLabel);
+        answersBox.appendChild(answerDiv);
+    }
+    return answersBox;
+}
+
+function createAnswerInput(index, i) {
+    const answerInp = document.createElement("input");
+    answerInp.type = 'radio';
+    answerInp.name = `question${index}`;
+    answerInp.classList.add("form-check-input");
+    answerInp.value = i + 1;
+    answerInp.id = `qAns_${index}_${i}`;
+    return answerInp;
+}
+
+function createAnswerLabel(answer, index, i) {
+    const answerLabel = document.createElement("label");
+    answerLabel.for = `qAns_${index}_${i}`;
+    answerLabel.innerText = answer;
+    answerLabel.classList.add("form-check-label");
+    return answerLabel;
+}
+
+
+/* Run */
 
 getAllLanguages()
 langBtn.addEventListener('click', getQuestions)
