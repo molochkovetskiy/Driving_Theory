@@ -1,32 +1,55 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light text-secondary-emphasis">
-  <a class="navbar-brand" href="#">Navbar</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav"
-    aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav">
-      <li class="nav-item active">
-        <a class="nav-link" href="{% url 'index' %}">Home <span class="sr-only">(current)</span></a>
-      </li>
+<nav
+    class="navbar navbar-expand-lg navbar-light bg-light text-secondary-emphasis"
+>
+    <a class="navbar-brand" href="/">DriveWise</a>
+    <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+    >
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="{% url 'index' %}"
+                    >Home <span class="sr-only">(current)</span></a
+                >
+            </li>
+            {% if request.user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'exam' %}">Exam</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-nowrap" href="{% url 'results' %}">Results</a>
+            </li>
+            {% endif %}
+        </ul>
 
-      {% if request.user.is_authenticated %}
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'exam' %}">Exam</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'results' %}">Results</a>
-      </li>
-      <li class="nav-item"> {{ user.username }} | <a class="nav-link" href="{% url 'logout' %}">Log Out</a></li>
-      {% else %}
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'login' %}">Sign In</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'register' %}">Sign Up</a>
-      </li>
-      {% endif %}
-
-    </ul>
-  </div>
+        <ul class="navbar-nav ml-auto">
+          {% if request.user.is_authenticated %}
+            <li class="nav-item text-nowrap">
+                <a class="nav-link">{{ user.username }} </a>
+            </li>
+            <li class="nav-item text-nowrap ms-auto">
+                <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link text-nowrap" href="{% url 'login' %}"
+                    >Sign In</a
+                >
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-nowrap" href="{% url 'register' %}"
+                    >Sign Up</a
+                >
+            </li>
+            {% endif %}
+        </ul>
+    </div>
 </nav>

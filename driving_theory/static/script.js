@@ -1,11 +1,10 @@
 const langBtn = document.getElementById("lang-btn");
 const langForm = document.getElementById("lang-form");
 const body = document.querySelector("body");
-let questions = '';
+let questions = "";
 let usr_answers = {};
 let corrAnswers = {};
 let curr_question = 0;
-
 
 /* Get questions and start exam */
 
@@ -14,27 +13,26 @@ async function getAllLanguages() {
         const url = "http://127.0.0.1:8000/exam/languages/";
         const response = await fetch(url);
         if (!response.ok) {
-            throw new Error("Couldn`t get languages")
+            throw new Error("Couldn`t get languages");
         } else {
             let data = await response.json();
             displayAllLanguages(langForm, data);
         }
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
 }
 
 function displayAllLanguages(element, data) {
-
     for (let i = 0; i < data.length; i++) {
         const newInput = document.createElement("input");
-        newInput.type = 'radio';
-        newInput.name = 'lang'
-        newInput.value = data[i]['id'];
-        newInput.id = `langInput${data[i]['id']}`;
+        newInput.type = "radio";
+        newInput.name = "lang";
+        newInput.value = data[i]["id"];
+        newInput.id = `langInput${data[i]["id"]}`;
         const newInputLabel = document.createElement("label");
         newInputLabel.for = newInput.id;
-        newInputLabel.innerText = data[i]['code'];
+        newInputLabel.innerText = data[i]["code"];
         newInputLabel.classList.add("form-check-label");
 
         element.append(newInput, newInputLabel);
@@ -43,14 +41,14 @@ function displayAllLanguages(element, data) {
 
 async function getQuestions() {
     let language = -1;
-    const langInputs = document.getElementsByName('lang');
+    const langInputs = document.getElementsByName("lang");
     for (i = 0; i < langInputs.length; i++) {
         if (langInputs[i].checked) {
             language = langInputs[i].value;
         }
     }
 
-    const url = `http://127.0.0.1:8000/exam/get-exam-questions/${language}`
+    const url = `http://127.0.0.1:8000/exam/get-exam-questions/${language}`;
     try {
         const response = await fetch(url);
         if (!response.ok) {
@@ -61,11 +59,12 @@ async function getQuestions() {
             await renderExam(questions);
         }
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
 }
 
 async function renderExam(questions) {
+    // body.innerHTML = '';
     const startExamDiv = document.getElementById("start-exam");
     startExamDiv.innerText = "";
     //box for 1 question
@@ -76,6 +75,8 @@ async function renderExam(questions) {
     const questionsDiv = document.createElement("div");
     questionsDiv.id = "questions-div";
     questionsDiv.className = "text-secondary-emphasis";
+    const footer = document.getElementById("footer");
+    footer.remove()
 
     body.append(questionsBoxDiv);
     questionsBoxDiv.append(sideMenuDiv, questionsDiv);
@@ -85,12 +86,11 @@ async function renderExam(questions) {
     showSubmitButton();
 }
 
-
 /* Exam side menu */
 
 function renderSideMenu(parent, questions) {
     const sideQuestionsBox = document.createElement("div");
-    sideQuestionsBox.id = "side-questions-box"
+    sideQuestionsBox.id = "side-questions-box";
 
     for (let index = 0; index < questions.length; index++) {
         const qSideDiv = document.createElement("div");
@@ -99,8 +99,8 @@ function renderSideMenu(parent, questions) {
         qSideDiv.classList = "link-to-question";
         qSideSpan.id = `q_s_span_${index}`;
         qSideSpan.innerText = `#${index + 1}`;
-        qSideDiv.append(qSideSpan)
-        sideQuestionsBox.append(qSideDiv)
+        qSideDiv.append(qSideSpan);
+        sideQuestionsBox.append(qSideDiv);
 
         qSideDiv.addEventListener("click", saveTheAnswer);
 
@@ -108,13 +108,12 @@ function renderSideMenu(parent, questions) {
             const questionsDiv = document.getElementById("questions-div");
             questionsDiv.innerText = "";
             showQuestion(questionsDiv, questions, index);
-        })
-
+        });
     }
     parent.append(sideQuestionsBox);
     const timeSpan = document.createElement("span");
-    timeSpan.id = "time"
-    parent.append(timeSpan)
+    timeSpan.id = "time";
+    parent.append(timeSpan);
     const twentyMinutes = 20 * 60;
     startTimer(twentyMinutes, timeSpan);
 }
@@ -132,19 +131,25 @@ async function showQuestion(parent, questions, index) {
 function highlightSideBarQuestion(index) {
     removeHighlightFromSideBarQuestion();
     curr_question = index;
-    const sideQuestionLink = document.getElementById(`q_s_div_${curr_question}`);
+    const sideQuestionLink = document.getElementById(
+        `q_s_div_${curr_question}`
+    );
     sideQuestionLink.style.border = "1px solid red";
 }
 
 function removeHighlightFromSideBarQuestion() {
-    const sideQuestionLink = document.getElementById(`q_s_div_${curr_question}`);
+    const sideQuestionLink = document.getElementById(
+        `q_s_div_${curr_question}`
+    );
     if (sideQuestionLink) {
         sideQuestionLink.style.border = "1px solid black";
     }
 }
 
 function startTimer(duration, display) {
-    var timer = duration, minutes, seconds;
+    var timer = duration,
+        minutes,
+        seconds;
     setInterval(function () {
         minutes = parseInt(timer / 60, 10);
         seconds = parseInt(timer % 60, 10);
@@ -159,7 +164,6 @@ function startTimer(duration, display) {
         }
     }, 1000);
 }
-
 
 /* Question render */
 
@@ -199,7 +203,12 @@ function createImageElement(src) {
 }
 
 function renderAnswerChoices(parent, question, index) {
-    const answers = [question['answer1'], question['answer2'], question['answer3'], question['answer4']];
+    const answers = [
+        question["answer1"],
+        question["answer2"],
+        question["answer3"],
+        question["answer4"],
+    ];
     const answersBox = document.createElement("div");
     answersBox.id = "answers-box";
 
@@ -227,8 +236,8 @@ function createAnswerDiv(index, i) {
 
 function createAnswerInput(index, i) {
     const answerInp = document.createElement("input");
-    answerInp.type = 'radio';
-    answerInp.name = 'question';
+    answerInp.type = "radio";
+    answerInp.name = "question";
     answerInp.value = i;
     answerInp.id = `qAns_${index}_${i}`;
     answerInp.classList.add("form-check-input");
@@ -253,17 +262,27 @@ function renderListButtons(parent, questions, index) {
     listButtons.id = "list-buttons";
 
     if (index > 0) {
-        addButtonToList(listButtons, "prev-btn", "prev-button", "<", () => showQuestion(parent, questions, index - 1));
+        addButtonToList(listButtons, "prev-btn", "prev-button", "<", () =>
+            showQuestion(parent, questions, index - 1)
+        );
     }
 
     if (index < questions.length - 1) {
-        addButtonToList(listButtons, "next-btn", "next-button", ">", () => showQuestion(parent, questions, index + 1));
+        addButtonToList(listButtons, "next-btn", "next-button", ">", () =>
+            showQuestion(parent, questions, index + 1)
+        );
     }
 
     parent.appendChild(listButtons);
 }
 
-function addButtonToList(listButtons, buttonClass, buttonText, innerText, clickHandler) {
+function addButtonToList(
+    listButtons,
+    buttonClass,
+    buttonText,
+    innerText,
+    clickHandler
+) {
     const button = document.createElement("button");
     button.classList.add(buttonClass);
     button.classList.add("list-btn");
@@ -276,7 +295,7 @@ function addButtonToList(listButtons, buttonClass, buttonText, innerText, clickH
 async function displayImg(element, image_id) {
     try {
         if (image_id) {
-            const url = `http://127.0.0.1:8000/exam/get-img/${image_id}`
+            const url = `http://127.0.0.1:8000/exam/get-img/${image_id}`;
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error("Couldn`t get languages");
@@ -307,15 +326,17 @@ async function saveTheAnswer() {
             answer = Number(ansInputs[i].value);
             //get question number from its id
             questionNum = ansInputs[i].id.split("_")[1];
-            console.log("questionNum: " + questionNum)
+            console.log("questionNum: " + questionNum);
             // save answer to global usr_answers
             usr_answers[questionNum] = answer;
             // highlighting already answered questions
-            let sideQuestionLink = document.getElementById(`q_s_div_${questionNum}`);
+            let sideQuestionLink = document.getElementById(
+                `q_s_div_${questionNum}`
+            );
             sideQuestionLink.style.backgroundColor = "lightgreen";
         }
     }
-    console.log("usr_answers: " + Object.entries(usr_answers))
+    console.log("usr_answers: " + Object.entries(usr_answers));
 }
 
 function showSubmitButton() {
@@ -323,10 +344,10 @@ function showSubmitButton() {
     submitButton.id = "submit-answers";
     submitButton.innerText = "OK!"; // add font awesome icon to submit
     // getting right answers
-    submitButton.addEventListener("click", saveTheAnswer)
+    submitButton.addEventListener("click", saveTheAnswer);
     submitButton.addEventListener("click", getCorrAnswers);
     const sidebarDiv = document.getElementById("side-menu-div");
-    sidebarDiv.append(submitButton)
+    sidebarDiv.append(submitButton);
 }
 
 /* Results */
@@ -342,7 +363,10 @@ async function getCorrAnswers() {
     body.append(resExamDiv);
 
     const corrAnsCounter = countCorrectAnswers(corrAnswers);
-    const resultScore = createResultScoreElement(corrAnsCounter, questions.length);
+    const resultScore = createResultScoreElement(
+        corrAnsCounter,
+        questions.length
+    );
     resMenuDiv.append(resultScore);
 
     for (let index = 0; index < questions.length; index++) {
@@ -428,7 +452,12 @@ function createAnswersBox(index, question) {
     const answersBox = document.createElement("div");
     answersBox.classList = "answers-box";
 
-    const answers = [question['answer1'], question['answer2'], question['answer3'], question['answer4']];
+    const answers = [
+        question["answer1"],
+        question["answer2"],
+        question["answer3"],
+        question["answer4"],
+    ];
     for (let i = 1; i <= answers.length; i++) {
         const answerDiv = createAnswerDiv(index, i);
         const answerInp = createAnswerInput(index, i);
@@ -450,7 +479,7 @@ function createAnswersBox(index, question) {
 
 function createAnswerInput(index, i) {
     const answerInp = document.createElement("input");
-    answerInp.type = 'radio';
+    answerInp.type = "radio";
     answerInp.name = `question${index}`;
     answerInp.classList.add("form-check-input");
     answerInp.value = i + 1;
@@ -466,8 +495,7 @@ function createAnswerLabel(answer, index, i) {
     return answerLabel;
 }
 
-
 /* Run */
 
-getAllLanguages()
-langBtn.addEventListener('click', getQuestions)
+getAllLanguages();
+langBtn.addEventListener("click", getQuestions);
