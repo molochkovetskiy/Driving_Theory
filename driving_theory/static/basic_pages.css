@@ -27,7 +27,7 @@ body {
     color: #c0392b; /* Hover color for links (darker red) */
   }
   
-  .form-input {
+  /* .form-input {
     width: 300px;
     font-size: 16px;
     padding: 10px;
@@ -47,7 +47,7 @@ body {
     padding: 0;
     color: #e74c3c; 
     margin: 0;
-  }
+  } */
   
   .wrapper {
     display: flex;
@@ -90,6 +90,10 @@ body {
   
   #img-box#login-img{
     width: 100%;
+<<<<<<< HEAD
+=======
+    /* height: 550px; */
+>>>>>>> 92c8ae2ddda9d6db408b8e6cf850a77a2de586f2
     object-fit: cover;
   }
 
