@@ -7,15 +7,46 @@
 {% endblock %}
 
 {% block pagecontent %}
+<!-- Section: Design Block -->
+<section class="text-center text-lg-start">
+  
+    <!-- Jumbotron -->
+    <div class="container py-4">
+      <div class="row g-0 align-items-center">
+        <div class="col-lg-6 mb-5 mb-lg-0">
+          <div class="card cascading-right" style="background: hsla(0, 0%, 100%, 0.55);backdrop-filter: blur(30px);">
+            <div class="card-body p-5 shadow-5 text-center">
+              <h2 class="fw-bold mb-5">Log in</h2>
+
+
+
 <form method="post">
     {% csrf_token %}
 
     <div class="form-error">{{ form.non_field_errors }}</div>
 
     {% for f in form %}
-    <p><label class="form-label" for="{{ f.id_for_label }}">{{ f.label }}: </label>{{ f }}</p>
-    <div class="form-error">{{ f.errors }}</div>
+    <div class="form-outline mb-4">
+        <p><label class="form-label" for="{{ f.id_for_label }}">{{ f.label }}: </label>{{ f }}</p>
+        <div class="form-error">{{ f.errors }}</div>
+    </div>
     {% endfor %}
-    <button type="submit">Enter</button>
+    <button type="submit" class="btn btn-primary btn-block mb-4">Enter</button>
 </form>
+
+
+
+</div>
+</div>
+</div>
+
+<div id="img-box" class="col-lg-5 mb-5 mb-lg-0">
+<img src="/static/media/driving_login.jpg" id="login-img" class="w-100 rounded-4 shadow-4"
+  alt="" />
+</div>
+</div>
+</div>
+<!-- Jumbotron -->
+</section>
+<!-- Section: Design Block -->
 {% endblock %}
