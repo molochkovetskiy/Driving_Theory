@@ -91,6 +91,7 @@ async function renderExam(questions) {
 function renderSideMenu(parent, questions) {
     const sideQuestionsBox = document.createElement("div");
     sideQuestionsBox.id = "side-questions-box";
+    sideQuestionsBox.classList.add("text-secondary-emphasis");
 
     for (let index = 0; index < questions.length; index++) {
         const qSideDiv = document.createElement("div");
