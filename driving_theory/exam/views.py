@@ -18,6 +18,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView  # Import TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 # from .permissions import IsDepartmentAdmin
 # from django.forms import model_to_dict
 
@@ -138,11 +139,14 @@ class FillDB(APIView):
 class HomePageView(TemplateView):
     template_name = "./exam/index.html"
 
-class ExamPageView(TemplateView):
+class ExamPageView(LoginRequiredMixin, TemplateView):
     template_name = "./exam/exam.html"    
+    login_url = "/exam/login/"
 
-class RresultsView(TemplateView):
+class ResultsView(LoginRequiredMixin ,TemplateView):
     template_name = "./exam/results.html"
+    login_url = "/exam/login/"
+    redirect_field_name = "redirect_to"
 
 class RegisterUser(CreateView):
     form_class = RegisterUserForm
