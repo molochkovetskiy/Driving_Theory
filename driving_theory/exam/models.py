@@ -37,3 +37,6 @@ class Questions(models.Model):
     
     def __str__(self):
         return f"{self.id}, {self.corr_answer}, {self.category_id}, {self.question}"
+    
+# class Results(models.Model):
+#     exam_id = models.
